@@ -80,6 +80,6 @@ ExpressWalker provides a generic way to examine and change any object graph in f
     </metadata>
 	<files>
 		<file src="..\bin\Release\netstandard2.0\ExpressWalker.Core.dll" target="lib\netstandard2.0\ExpressWalker.Core.dll" />
-    <file src="..\LICENSE.txt" target="" />
+    <file src="LICENSE.txt" />
 	</files>
 </package>

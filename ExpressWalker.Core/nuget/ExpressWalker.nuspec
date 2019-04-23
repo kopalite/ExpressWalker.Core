@@ -1,13 +1,13 @@
 <?xml version="1.0" encoding="utf-8"?>
 <package xmlns="http://schemas.microsoft.com/packaging/2011/08/nuspec.xsd">
     <metadata>
-        <id>ExpressWalker</id>
+        <id>ExpressWalker.Core</id>
         <version>2.1.0.1</version>
         <title>ExpressWalker.Core</title>
         <authors>Ivan Kopcanski</authors>
         <owners>Ivan Kopcanski</owners>
-        <licenseUrl>https://github.com/kopalite/ExpressWalker/blob/master/LICENSE</licenseUrl>
-        <projectUrl>https://github.com/kopalite/ExpressWalker</projectUrl>
+        <license type="file">LICENSE.txt</license>
+        <projectUrl>https://github.com/kopalite/ExpressWalker.Core</projectUrl>
         <requireLicenseAcceptance>true</requireLicenseAcceptance>
         <description>
 ExpressWalker provides a generic way to examine and change any object graph in fashion similar to "Visitor Pattern". You can build generic hierarchy composition (visitor) that can visit and change any object's property, basing on configuration. Relies on expression trees while visiting objects (uses reflection only once while building a visitor). That's why IT IS WAY FASTER than custom solutions built with reflection.
@@ -62,12 +62,12 @@ It is protected from circular references so you can avoid exceptions. Provides f
 //visitor1 == visitor2 --false	 
 
 Many thanks to Francisco José Rey Gozalo for contributing with ideas and solutions.
-Read more on https://github.com/kopalite/ExpressWalker
+Read more on https://github.com/kopalite/ExpressWalker.Core
       </description>
       <summary>
 ExpressWalker provides a generic way to examine and change any object graph in fashion similar to "Visitor Pattern". You can build generic hierarchy composition (visitor) that can visit and change any object's property, basing on configuration. Relies on expression trees while visiting objects (uses reflection only once while building a visitor).
       </summary>
-        <releaseNotes>Visiting dictionary values is now supported. IVisitorsFactory can be used for building visitors for many types basing on the same settings. It caches visitors instances and use them as singletons - this will minimize boilerplate code you need to write. [VisitorHierarchy] attribute can be used to mark structures that are build as compositions (hierarchies) - that helps improving visitors build time.</releaseNotes>
+        <releaseNotes>This is initial version for .NET Core</releaseNotes>
         <copyright>Ivan Kopcanski 2019</copyright>
         <language>en-US</language>
         <tags>ExpressWalker Expressions Visitor</tags>
@@ -79,6 +79,7 @@ ExpressWalker provides a generic way to examine and change any object graph in f
         </frameworkAssemblies>
     </metadata>
 	<files>
-		<file src="..\bin\Release\netstandard2.0\ExpressWalker.Core.dll" target="lib" />
+		<file src="..\bin\Release\netstandard2.0\ExpressWalker.Core.dll" target="lib\netstandard2.0\ExpressWalker.Core.dll" />
+    <file src="..\LICENSE.txt" target="" />
 	</files>
 </package>

@@ -1,0 +1,84 @@
+<?xml version="1.0" encoding="utf-8"?>
+<package xmlns="http://schemas.microsoft.com/packaging/2011/08/nuspec.xsd">
+    <metadata>
+        <id>ExpressWalker</id>
+        <version>2.1.0.1</version>
+        <title>ExpressWalker.Core</title>
+        <authors>Ivan Kopcanski</authors>
+        <owners>Ivan Kopcanski</owners>
+        <licenseUrl>https://github.com/kopalite/ExpressWalker/blob/master/LICENSE</licenseUrl>
+        <projectUrl>https://github.com/kopalite/ExpressWalker</projectUrl>
+        <requireLicenseAcceptance>true</requireLicenseAcceptance>
+        <description>
+ExpressWalker provides a generic way to examine and change any object graph in fashion similar to "Visitor Pattern". You can build generic hierarchy composition (visitor) that can visit and change any object's property, basing on configuration. Relies on expression trees while visiting objects (uses reflection only once while building a visitor). That's why IT IS WAY FASTER than custom solutions built with reflection.
+It is protected from circular references so you can avoid exceptions. Provides fluent API which increases code readability in terms of guessing the hierarchy being built from the code. Some of functionalities: visiting properties by matching owner type, property name and type (or only property type), visiting collecitons and dictionary items, specifying depth, custom expression for changing property value, cloning etc.
+	
+//example 1 - IVisitor that visits properties by ownner type and property names and/or types (start from TypeWalker class):
+
+  var typeVisitor = TypeWalker&lt;Parent&gt;.Create()
+                  .ForProperty&lt;Parent, string&gt;(p => p.TestString1, (old, met) => old + met)
+                  .ForProperty&lt;Child, DateTime&gt;(p => p.TestDate1, (old, met) => old.AddYears(10))
+                  .ForProperty&lt;CommonType&gt;((old, met) => new CommonType { CommonString = "..." })
+                  .Build(depth:10, guard:new PropertyGuard(), supportsCloning: true);
+				  
+	//guard is protection against type-wise circular references. supportsCloning = false improves build time.
+				  
+  var parentClone = new Parent();
+  var propertyValues = new HashSet&lt;PropertyValue&gt;()
+  typeVisitor.Visit(parentObject, parentClone, depth:10, guard:new InstanceGuard(), values:propertyValues); 
+
+	//guard is protection against instance-wise circular references. values will hold flat list of new/old values.
+  
+//example 2 - IVisitor that visits properties by explicit configuration (start from ManualWalker class):
+
+  var manualVisitor = ManualWalker.Create&lt;A1&gt;()
+                                    .Property&lt;A1, DateTime&gt;(a1 => a1.A1Date, (va1, met) => va1.AddYears(10))
+                                    .Element&lt;A1, B1&gt;(a1 => a1.B1, b1 =>
+                                            b1.Property&lt;B1, string&gt;(x => x.B1Name, (vb1, met) => vb1 + "Test2"))
+                                    .Collection&lt;A1, B2&gt;(a1 => a1.B2List, b2 => b2
+                                            .Property&lt;B2, DateTime&gt;(x => x.B2Date, (vb2, met) => vb2.AddYears(10)))
+                                .Build();
+
+  manualVisitor.Visit(parentObject, blueprint:null, depth:10, guard:new InstanceGuard(), values:null);
+			
+//Paremeter 'met' in expressions above is optional metadata object set in design-time. 
+//It can be set by [VisitorMetadata] property attribute in visited class.
+//e.g. in example above, there is [VisitorMetadata("AnyString")] on property Parent.TestString1.
+
+//example 3 - IVisitor built and cached using the IVisitorsFactory:
+//scenario for visitors of same settings built for different types:
+  
+  var factory = new VisitorsFactory().WithSettings("name1", depth:5, usePropertyGuard:false, supportsCloning:false)
+                                       .ForProperty&lt;int&gt;((val, met) => 2)
+                                     .WithSettings("name6")
+                                       .ForProperty&lt;Parent, string&gt;( x => x.Name, (val, met) => "t");
+									 
+  var visitor1 = factory.GetVisitor("name1", typeof(Class1));
+  var visitor1a = factory.GetVisitor("name1", typeof(Class1));
+  var visitor2 = factory.GetVisitor("name1", typeof(Class2));
+  var visitor6 = factory.GetVisitor("name6", typeof(Class6));
+  
+//visitor1 == visitor1a --true
+//visitor1 == visitor2 --false	 
+
+Many thanks to Francisco José Rey Gozalo for contributing with ideas and solutions.
+Read more on https://github.com/kopalite/ExpressWalker
+      </description>
+      <summary>
+ExpressWalker provides a generic way to examine and change any object graph in fashion similar to "Visitor Pattern". You can build generic hierarchy composition (visitor) that can visit and change any object's property, basing on configuration. Relies on expression trees while visiting objects (uses reflection only once while building a visitor).
+      </summary>
+        <releaseNotes>Visiting dictionary values is now supported. IVisitorsFactory can be used for building visitors for many types basing on the same settings. It caches visitors instances and use them as singletons - this will minimize boilerplate code you need to write. [VisitorHierarchy] attribute can be used to mark structures that are build as compositions (hierarchies) - that helps improving visitors build time.</releaseNotes>
+        <copyright>Ivan Kopcanski 2019</copyright>
+        <language>en-US</language>
+        <tags>ExpressWalker Expressions Visitor</tags>
+        <dependencies />
+        <frameworkAssemblies>
+            <frameworkAssembly assemblyName="System" targetFramework="" />
+            <frameworkAssembly assemblyName="System.Core" targetFramework="" />
+            <frameworkAssembly assemblyName="Microsoft.CSharp" targetFramework="" />
+        </frameworkAssemblies>
+    </metadata>
+	<files>
+		<file src="..\bin\Release\netstandard2.0\ExpressWalker.Core.dll" target="lib" />
+	</files>
+</package>
